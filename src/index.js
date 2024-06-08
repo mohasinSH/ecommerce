@@ -17,5 +17,5 @@ root.render(
 reportWebVitals();
 
 
-git remote set-url origin https://github.com/mohasinSH/react-ecommerce.git
+git remote set-url origin https://github.com/mohasinSH/ecommerce.git
 
