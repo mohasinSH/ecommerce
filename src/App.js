@@ -13,7 +13,7 @@ function App() {
   useEffect(()=>{
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user)
+       
         dispatch({
           type:'SET_USER',
           user:user

@@ -14,7 +14,7 @@ const Login = () => {
         try{
             const userCredintials = await createUserWithEmailAndPassword(auth,email,password);
             const user = userCredintials.user;
-            console.log(user)
+            
             if(user){
                 navigate('/') 
             }
