@@ -3,7 +3,29 @@ import Header from "./Header";
 import Home from "./Home";
 import { Routes,Route } from "react-router-dom";
 import Login from "./Login";
+import { useEffect } from "react";
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useStateValue } from "./StateProvider";
 function App() {
+  const [{},dispatch] = useStateValue();
+
+  useEffect(()=>{
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user)
+        dispatch({
+          type:'SET_USER',
+          user:user
+        })
+      } else {
+        dispatch({
+          type:'SET_USER',
+          user:null
+        })
+      }
+    });
+  },[])
   return (
     <div className="App">
 
