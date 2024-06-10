@@ -3,16 +3,15 @@ import './Payment.css'
 import CheckoutProduct from './CheckoutProduct'
 import { useStateValue } from './StateProvider'
 import { Link, useNavigate } from 'react-router-dom'
-import { CardElement,useElements, useStripe } from '@stripe/react-stripe-js'
-import CurrencyFormat from 'react-currency-format'
+
+
 import Axios from './axios'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 const Payment = () => {
     const navigate = useNavigate();
     const [{user,basket},dispatch] = useStateValue();
-    const stripe = useStripe();
-    const elements = useElements()
+    
     const [succeeded,setSucceeded] = useState(false);
     const [processing,setProcessing] = useState('');
     const [error,setError] = useState();
