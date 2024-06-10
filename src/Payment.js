@@ -12,7 +12,7 @@ const Payment = () => {
     const navigate = useNavigate();
     const [{user,basket},dispatch] = useStateValue();
     const stripe = useStripe();
-    const elements = useElements();
+    const elements = useElements()
     const [succeeded,setSucceeded] = useState(false);
     const [processing,setProcessing] = useState('');
     const [error,setError] = useState();
