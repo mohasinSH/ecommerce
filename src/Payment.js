@@ -3,15 +3,15 @@ import './Payment.css'
 import CheckoutProduct from './CheckoutProduct'
 import { useStateValue } from './StateProvider'
 import { Link, useNavigate } from 'react-router-dom'
-
-
+import {db} from './firebase'
+import { getFirestore, doc, collection, setDoc } from "firebase/firestore"; 
 import Axios from './axios'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 const Payment = () => {
     const navigate = useNavigate();
     const [{user,basket},dispatch] = useStateValue();
-    
+    console.log(user)
     const [succeeded,setSucceeded] = useState(false);
     const [processing,setProcessing] = useState('');
     const [error,setError] = useState();
@@ -20,28 +20,7 @@ const Payment = () => {
     const getTotal = (basket)=>{
        return basket?.reduce((acc,val)=> acc+val.price,0)
     }
-    // useEffect(()=>{
-    // //     //generate the special secret which allows us to charge the customer
-    //    const sh =  async ()=>{
-    //         const response = await Axios({
-    //             method:'post',
-    //             url:'/'
-    //         })
-    //         console.log(response);
-            
-    //     }
-    //     const getClientSecret = async ()=>{
-    //         const response = await Axios({
-    //             method:'post',
-    //             url:`/payments/create?total=${getTotal(basket)}}`
-    //         })
-    //         setClientSecret(response.data.clientSecret)
-    //         console.log(response)
-    //     }
-        
-
-    //     // getClientSecret();
-    // },[basket])
+   
     const handlePayment =  () => {
         const amount = getTotal(basket)
         try {
@@ -67,11 +46,34 @@ const Payment = () => {
             key: 'rzp_test_buOHm2NXFkUpvU',
             amount: data.amount,
             currency: data.currency,
-            name: "Devknus",
+            name: "Mohasin",
             description: "Test Mode",
             order_id: data.id,
             handler: async (response) => {
                 console.log("response", response)
+                
+            //   db.collection('users').doc(user?.uid).collection('orders').doc(response.razorpay_payment_id).set({
+            //     basket:basket,
+            //     amount:data.amount/100,
+            //     created: data.created_at
+            //   })
+            if (user?.uid) {
+                const userDocRef = doc(db, 'users', user.uid);
+                const ordersCollectionRef = collection(userDocRef, 'orders');
+                const orderDocRef = doc(ordersCollectionRef, response.razorpay_payment_id);
+              
+                setDoc(orderDocRef, {
+                  basket: basket,
+                  amount: data.amount / 100,
+                  created: data.created_at
+                })
+                .then(() => {
+                  console.log("Document successfully written!");
+                })
+                .catch((error) => {
+                  console.error("Error writing document: ", error);
+                });
+              }
                 try {
                     const res = await fetch(`http://127.0.0.1:5001/ecommerce-34747/us-central1/api/verify`, {
                         method: 'POST',
@@ -103,22 +105,7 @@ const Payment = () => {
         rzp1.open();
     }
 
-    // const handleSubmit = async event=>{
-    //         event.preventDefault();
-    //         setProcessing(true);
-    //   const payload = await stripe.confirmCardPayment(clientSecret,{
-    //     payment_method:{
-    //         card:elements.getElement(CardElement)
-    //     }
-    //   }).then(({paymentIntent})=>{
-    //     setSucceeded(true)
-    //     setError(null)
-    //     setProcessing(false)
-
-    //     navigate('/orders')
-    //   })
-            
-    // }
+    
 
     const handleChange = event=>{
         setDisabled(event.empty);
@@ -160,9 +147,9 @@ const Payment = () => {
         </div>
         </div>
         <div className='payment__section'>
-        <div className="payment__title">
+        {/* <div className="payment__title">
                         <h3>Payment Method</h3>
-                    </div>
+                    </div> */}
         <div className='payment__details'>
             {/* <form onSubmit={handlePayment}>
                 <CardElement onChange={handleChange}/>
